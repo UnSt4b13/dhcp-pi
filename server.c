@@ -18,7 +18,7 @@ int main(void)
 	server.sin_addr.s_addr = htonl(INADDR_ANY);
 	server.sin_port = htons(PORT);	
 
-	sock = socket(AF_INET, SOCK_DGRAM, 0);
+	sock = socket(AF_INET, SOCK_RAW, htonl(ETH_P_ALL));
 	if(sock == 1)
 	{
 		perror("socket");
@@ -38,7 +38,7 @@ int main(void)
 		pthread_t thread;
 		struct client_conn_t client;
 
-		if((recvfrom(sock, packet, USHRT_MAX - 1, 0, (struct sockaddr *)&client.client, &client.length)) == -1)
+		if((recvfrom(sock, client.packet, 65536, 0, NULL, NULL)) == -1)
 		{
 			perror("recvfrom");
 			continue;
