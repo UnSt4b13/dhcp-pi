@@ -8,27 +8,17 @@
 
 #include "conn_handler.h"
 
-#define PORT 8888
-
 int main(void)
 {
 	int sock;
 	struct sockaddr_in server;
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = htonl(INADDR_ANY);
-	server.sin_port = htons(PORT);	
 
-	sock = socket(AF_INET, SOCK_RAW, htonl(ETH_P_ALL));
+	sock = socket(AF_PACKET, SOCK_RAW, htonl(ETH_P_ALL));
 	if(sock == 1)
 	{
 		perror("socket");
-		exit(-1);
-	}
-
-
-	if(bind(sock, (struct sockaddr *)&server, sizeof(server)) == -1)
-	{
-		perror("bind");
 		exit(-1);
 	}
 

@@ -20,7 +20,6 @@ struct client_conn_t
 
 void *conn_handler(void *args)
 {
-	char ip_addr[INET_ADDRSTRLEN];
 	struct client_conn_t *c = (struct client_conn_t *)args;
 	
 	c->eth = (struct ethhdr *)c->packet;
@@ -28,8 +27,11 @@ void *conn_handler(void *args)
 	c->udp = (struct udphdr *)(c->packet + (sizeof(struct ethhdr) + sizeof(struct iphdr)));
 	
 #if DEBUG		
-	inet_ntop(AF_INET, &(c->client.sin_addr), ip_addr, INET_ADDRSTRLEN);
-	printf("received connection from address at port: %s:%d\n", ip_addr, c->client.sin_port);
+	if(c->ip->protocol == 1)
+	{
+		c->client.sin_addr.s_addr = c->ip->saddr;
+		printf("received ping from: %s\n", inet_ntoa(c->client.sin_addr));
+	}
 #endif
 
 	pthread_exit(0);
