@@ -4,16 +4,12 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <pthread.h>
-#include <limits.h>
 
 #include "conn_handler.h"
 
 int main(void)
 {
 	int sock;
-	struct sockaddr_in server;
-	server.sin_family = AF_INET;
-	server.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	sock = socket(AF_PACKET, SOCK_RAW, htonl(ETH_P_ALL));
 	if(sock == 1)
