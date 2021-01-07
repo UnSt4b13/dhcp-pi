@@ -27,16 +27,18 @@ void *conn_handler(void *args)
 	c->eth = (struct ethhdr *)c->packet;
 	c->ip = (struct iphdr *)(c->packet + sizeof(struct ethhdr));
 	c->udp = (struct udphdr *)(c->packet + (sizeof(struct ethhdr) + sizeof(struct iphdr)));
-	c->dhcp = (struct dhcphdr *)(c->packet + (sizeof(struct ethhdr) + sizeof(struct iphdr) + sizeof(udphdr)));
+	c->dhcp = (struct dhcphdr *)(c->packet + (sizeof(struct ethhdr) + sizeof(struct iphdr) + sizeof(struct udphdr)));
 
-	if((int)c->ip->protocol == 17 && ntohs(c->udp->dest == 68*
+	if((int)c->ip->protocol == 17 && ntohs(c->udp->dest == 68))
 	{
 		
 #if DEBUG		
 		printf("received DHCP message\n");
 #endif
+
 		pthread_exit(0);
 		return NULL;
+	}
 	else
 	{
 		pthread_exit(0);
