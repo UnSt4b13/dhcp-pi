@@ -1,5 +1,5 @@
 
-struct dhcp_discover
+struct dhcphdr
 {
 	uint8_t op;
 	uint8_t type;

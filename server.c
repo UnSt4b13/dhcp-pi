@@ -12,7 +12,7 @@ int main(void)
 	int sock;
 
 	sock = socket(AF_PACKET, SOCK_RAW, htonl(ETH_P_ALL));
-	if(sock == 1)
+	if(sock == -1)
 	{
 		perror("socket");
 		exit(-1);

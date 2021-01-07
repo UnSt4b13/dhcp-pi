@@ -14,29 +14,29 @@ int main(void)
 {
 	int sock;
 	int opt = 1;
-	struct sockaddr_in addr;
-	struct dhcp_discover dd;
-	char packet[sizeof(dd)];
+	struct sockadhcpr_in adhcpr;
+	struct dhcphdr dhcp;
+	char packet[sizeof(dhcp)];
 	
-	dd.op = 1;
-	dd.type = 6;
-	dd.length = 6;
-	dd.hops = 0;
-	dd.xid = 0x41414141;
-	dd.seconds = 0;
-	dd.flags = 1;
-	dd.ciaddr = 0x0;
-	dd.yiaddr = 0x0;
-	dd.siaddr = 0x0;
+	dhcp.op = 1;
+	dhcp.type = 6;
+	dhcp.length = 6;
+	dhcp.hops = 0;
+	dhcp.xid = 0x41414141;
+	dhcp.seconds = 0;
+	dhcp.flags = 1;
+	dhcp.ciadhcpr = 0x0;
+	dhcp.yiadhcpr = 0x0;
+	dhcp.siadhcpr = 0x0;
 
-	strncpy(dd.chaddr, "<MAC ADDRESS>", 13);
-	strncpy(dd.sname, "UBUNTU", 6);
+	strncpy(dhcp.chadhcpr, "ABCDEF", 13);
+	strncpy(dhcp.sname, "UBUNTU", 6);
 
-	memset(&dd.filename[0], 0, sizeof(dd.filename));
-	memset(&dd.options[0], 0, sizeof(dd.options));	
+	memset(&dhcp.filename[0], 0, sizeof(dhcp.filename));
+	memset(&dhcp.options[0], 0, sizeof(dhcp.options));	
 
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(PORT);	
+	adhcpr.sin_family = AF_INET;
+	adhcpr.sin_port = htons(PORT);	
 
 	sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if(sock == -1)
@@ -52,9 +52,9 @@ int main(void)
 		exit(-1);
 	}
 
-	memcpy(packet, &dd, sizeof(dd));
+	memcpy(packet, &dhcp, sizeof(dhcp));
 
-	if(sendto(sock, packet, strlen(packet), 0, (struct sockaddr *)&addr, sizeof(addr.sin_zero)) == -1)
+	if(sendto(sock, packet, strlen(packet), 0, (struct sockadhcpr *)&adhcpr, sizeof(adhcpr)) == -1)
 	{
 		perror("sendto");
 		exit(-1);

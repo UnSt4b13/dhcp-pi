@@ -16,6 +16,7 @@ struct client_conn_t
 	struct ethhdr *eth;
 	struct iphdr *ip;
 	struct udphdr *udp;
+	struct dhcphdr *dhcp;
 };
 
 void *conn_handler(void *args)
@@ -26,17 +27,20 @@ void *conn_handler(void *args)
 	c->eth = (struct ethhdr *)c->packet;
 	c->ip = (struct iphdr *)(c->packet + sizeof(struct ethhdr));
 	c->udp = (struct udphdr *)(c->packet + (sizeof(struct ethhdr) + sizeof(struct iphdr)));
-	
-#if DEBUG		
-	if(c->ip->protocol == 1)
+	c->dhcp = (struct dhcphdr *)(c->packet + (sizeof(struct ethhdr) + sizeof(struct iphdr) + sizeof(udphdr)));
+
+	if((int)c->ip->protocol == 17 && ntohs(c->udp->dest == 68*
 	{
-		inet_ntop(AF_INET, &(c->ip->saddr), ip_addr, INET_ADDRSTRLEN);
-		printf("received ping from: %s\n", ip_addr);
-	}
+		
+#if DEBUG		
+		printf("received DHCP message\n");
 #endif
-
-	pthread_exit(0);
-
-	return NULL;
+		pthread_exit(0);
+		return NULL;
+	else
+	{
+		pthread_exit(0);
+		return NULL;
+	}
 
 }	
