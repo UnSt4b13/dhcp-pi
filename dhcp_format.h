@@ -17,3 +17,33 @@ struct dhcphdr
 	char filename[128];
 	unsigned char options[312];	
 };
+
+int get_msg_type(struct dhcphdr *dhcp)
+{
+	int index = 5;
+	int end = 0;
+	int found = 0;
+	int msg_type = 0;
+	int length = 0;
+
+	while(!found && !end)
+	{
+		length = dhcp->options[index + 1];
+
+		switch(dhcp->options[index])
+		{
+			case 0xff:
+				end = 1;
+				break;
+			case 0x35:
+				msg_type = dhcp->options[index + length];
+				found = 1;
+				break;
+			default:
+				index += (length + 2);
+		}
+	}
+
+	return msg_type;
+
+}

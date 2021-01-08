@@ -5,6 +5,8 @@
 #include <netinet/ip.h>
 #include <netinet/udp.h>
 
+#include "dhcp_format.h"
+
 #define DEBUG 1
 
 struct client_conn_t
@@ -36,8 +38,18 @@ void *conn_handler(void *args)
 		printf("received DHCP message\n");
 #endif
 
-		pthread_exit(0);
-		return NULL;
+		switch(get_msg_type(c->dhcp))
+		{
+			case 1:
+				//discover message
+				break;
+			case 3:
+				//request message
+				break;
+			default:
+				pthread_exit(0);
+				return NULL;
+		}
 	}
 	else
 	{

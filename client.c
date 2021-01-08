@@ -8,13 +8,13 @@
 
 #include "dhcp_format.h"
 
-#define PORT 68
+#define PORT 67
 
 int main(void)
 {
 	int sock;
 	int opt = 1;
-	struct sockadhcpr_in adhcpr;
+	struct sockaddr_in addr;
 	struct dhcphdr dhcp;
 	char packet[sizeof(dhcp)];
 	
@@ -25,18 +25,27 @@ int main(void)
 	dhcp.xid = 0x41414141;
 	dhcp.seconds = 0;
 	dhcp.flags = 1;
-	dhcp.ciadhcpr = 0x0;
-	dhcp.yiadhcpr = 0x0;
-	dhcp.siadhcpr = 0x0;
-
-	strncpy(dhcp.chadhcpr, "ABCDEF", 13);
-	strncpy(dhcp.sname, "UBUNTU", 6);
-
+	dhcp.ciaddr = 0x0;
+	dhcp.yiaddr = 0x0;
+	dhcp.siaddr = 0x0;
+	dhcp.giaddr = 0x0;
+	strncpy(dhcp.chaddr, "08:00:27:1c:17:b5", 15);
+	memset(&dhcp.sname[0], 0, sizeof(dhcp.sname));
 	memset(&dhcp.filename[0], 0, sizeof(dhcp.filename));
-	memset(&dhcp.options[0], 0, sizeof(dhcp.options));	
 
-	adhcpr.sin_family = AF_INET;
-	adhcpr.sin_port = htons(PORT);	
+	//cookie
+	memset(&dhcp.options[0], 0x63, 1);
+	memset(&dhcp.options[1], 0x82, 1);
+	memset(&dhcp.options[2], 0x53, 1);
+	memset(&dhcp.options[3], 0x63, 1);	
+
+	//message type
+	memset(&dhcp.options[4], 0x35, 1);
+	memset(&dhcp.options[5], 0x1, 1);
+	memset(&dhcp.options[6], 0x1, 1);
+
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(PORT);	
 
 	sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if(sock == -1)
@@ -54,7 +63,7 @@ int main(void)
 
 	memcpy(packet, &dhcp, sizeof(dhcp));
 
-	if(sendto(sock, packet, strlen(packet), 0, (struct sockadhcpr *)&adhcpr, sizeof(adhcpr)) == -1)
+	if(sendto(sock, packet, strlen(packet), 0, (struct sockaddr *)&addr, sizeof(addr)) == -1)
 	{
 		perror("sendto");
 		exit(-1);
