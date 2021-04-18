@@ -46,6 +46,7 @@ int main(void)
 
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(PORT);	
+	addr.sin_addr.s_addr = htonl(INADDR_BROADCAST);
 
 	sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if(sock == -1)

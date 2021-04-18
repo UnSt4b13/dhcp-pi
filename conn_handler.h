@@ -6,14 +6,12 @@
 #include <netinet/udp.h>
 
 #include "dhcp_format.h"
+#include "opt_handlers.h"
 
 #define DEBUG 1
 
 struct client_conn_t
 {
-	int client_fd;
-	struct sockaddr_in client;
-	socklen_t length;
 	char packet[65536];
 	struct ethhdr *eth;
 	struct iphdr *ip;
@@ -31,7 +29,7 @@ void *conn_handler(void *args)
 	c->udp = (struct udphdr *)(c->packet + (sizeof(struct ethhdr) + sizeof(struct iphdr)));
 	c->dhcp = (struct dhcphdr *)(c->packet + (sizeof(struct ethhdr) + sizeof(struct iphdr) + sizeof(struct udphdr)));
 
-	if((int)c->ip->protocol == 17 && ntohs(c->udp->dest == 68))
+	if(((int)c->ip->protocol == 17) && (ntohs(c->udp->source == 68)) && (ntohs(c->udp->dest) == 67))
 	{
 		
 #if DEBUG		
@@ -42,6 +40,7 @@ void *conn_handler(void *args)
 		{
 			case 1:
 				//discover message
+				disc_handler(c);
 				break;
 			case 3:
 				//request message

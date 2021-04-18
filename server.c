@@ -11,7 +11,7 @@ int main(void)
 {
 	int sock;
 
-	sock = socket(AF_PACKET, SOCK_RAW, htonl(ETH_P_ALL));
+	sock = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
 	if(sock == -1)
 	{
 		perror("socket");
